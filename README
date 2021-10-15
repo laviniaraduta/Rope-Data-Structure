@@ -1,0 +1,80 @@
+========== Lavinia-Maria Raduta 2021 ==========
+
+
+============================= Rope Data Structure =============================
+
+This homework proposes to implement a Rope Tree Data Structure, which is used to
+store or manipulate large strings in a more efficient manner. It allows
+operations like insertion, deletion, search and random access to be executed
+faster and much more efficiently in comparison to a traditional string.
+
+1) Concatenating 2 rope trees (Concat)
+- A concatenation operation between 2 ropes (rt1 & rt2) is performed by
+creating a new root node which has a weight equal to the sum of weights of leaf
+nodes in rt1 and contains the EMPTY string.
+- The new node's left child is rt1's root and the right child is rt2's root.
+- We create a new tree with the new root.
+
+
+2) Searching a character (Indexing)
+- In order to find the character at a given position, we search recursively
+beginning with the root node.
+- If the weight of the current node is lower than the value of the index, we
+subtract the weight from index and move on the right subtree, if existing.
+- If the weight is less than the value of the index we simply move left.
+- We continue until we reach a leaf node.
+- The leaf node is returned by the function node_containing_char and in the
+driver function (indexRope) we return the character at the changed index.
+
+3) Searching a substring between 2 indexes (Search)
+- We use the function for indexing to find character by character the
+substring between start and end.
+- We put them in a string and don't forget to put the ending character
+'\0' to make it a string.
+
+4) Splitting a rope at an index position (Split)
+- the function has 2 subfunctions:
+    * split_node: used in the case when the index is in the middle of a leaf
+        > we separate the string in 2 parts (at the index position);
+        > we create 2 new nodes that contain the 2 substrings;
+        > the node that we want to split becomes the parent of these 2;
+        > we start by replacing the old string with EMPTY;
+        > we recalculate the weight for the splitted node as the length of the
+        left substring (left child's weight);
+    * split_tree: used to separate the subtrees
+        > depending on the weight of the root we go on the right subtree
+        (weight <= index) or on the left subtree (weight > index);
+        > on the right: 
+            ~ we search recursively for a node that is parent of a leaf.
+            ~ when we find it, we cut the right child, transform it in a tree
+            and keep it in the stack;
+        > on the left:
+            ~ if the node is parent of a leaf we have to cut the subtree
+            beginning with this node, so we have to store the parent;
+            ~ else if there is a right subtree we simply cut it,
+            transform it in a tree and store it in the stack.
+- the main split function begins with making a deep copy of the original rope
+tree because it is important not to destroy the original tree;
+- we search for the leaf that begins the split.
+- if the first character is inside the leaf's substring we split that node;
+- after the split_tree function we have a stack with the trees cut from the
+main tree;
+- the pair of ropes that we have to return is formed like this:
+    > the left part is the remaining part of the copied tree;
+    > the right part is formed by concatenating the trees that we have in the
+    stack;
+    > we repeatedly concatenate the tree poped from the stack until the
+    stack is empty.
+- we have to recalculate the weights for the left part of the tree.
+
+5) Inserting a substring in the rope (Insert)
+- we simply need to split the original tree at the index position from which
+we have to insert;
+- concatenate the tree formed from the newly added string with the right part.
+- concatenate the result with the first part of the splitted pair.
+
+6) Deleting a substring of length len starting at index start (Delete)
+- we make 2 splits of the original tree: one at the starting index and one at
+start + len position and we obtain pair1 and pair2;
+- we make trees from the left part of pair1 and from the right part of pair2;
+- we simply concat the 2 parts.
